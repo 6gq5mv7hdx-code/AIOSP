@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
-  targetNamespace="https://openinterferometry.org/schema/aios/1.0"
-  xmlns="https://openinterferometry.org/schema/aios/1.0"
+  targetNamespace="https://openinterferometry.org/schema/aios/1.1"
+  xmlns="https://openinterferometry.org/schema/aios/1.1"
   elementFormDefault="qualified"
   attributeFormDefault="unqualified">
 
-  <!-- =========================
-       Simple Types / Enums
-       ========================= -->
+  <!-- v1.1 adds structured references to support "paper-based" instances -->
 
   <xs:simpleType name="UUIDType">
     <xs:restriction base="xs:string">
@@ -27,7 +25,6 @@
   </xs:simpleType>
 
   <xs:simpleType name="UnitString">
-    <!-- Keep units as strings to avoid over-constraining; recommend UCUM in docs -->
     <xs:restriction base="xs:string">
       <xs:minLength value="1"/>
     </xs:restriction>
@@ -127,10 +124,6 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <!-- =========================
-       Reusable Complex Types
-       ========================= -->
-
   <xs:complexType name="QuantityType">
     <xs:sequence>
       <xs:element name="value" type="xs:double"/>
@@ -184,6 +177,20 @@
       <xs:element name="uri" type="URIType" minOccurs="0"/>
       <xs:element name="sha256" type="xs:string" minOccurs="0"/>
       <xs:element name="version" type="xs:string" minOccurs="0"/>
+      <xs:element name="note" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- New in v1.1 -->
+  <xs:complexType name="ReferenceType">
+    <xs:sequence>
+      <xs:element name="title" type="NonEmptyString"/>
+      <xs:element name="authors" type="xs:string" minOccurs="0"/>
+      <xs:element name="year" type="xs:gYear" minOccurs="0"/>
+      <xs:element name="doi" type="xs:string" minOccurs="0"/>
+      <xs:element name="arxiv" type="xs:string" minOccurs="0"/>
+      <xs:element name="uri" type="URIType" minOccurs="0"/>
+      <xs:element name="bibtex" type="xs:string" minOccurs="0"/>
       <xs:element name="note" type="xs:string" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
@@ -422,10 +429,6 @@
     </xs:sequence>
   </xs:complexType>
 
-  <!-- =========================
-       Root: Interferometer
-       ========================= -->
-
   <xs:element name="Interferometer">
     <xs:complexType>
       <xs:sequence>
@@ -530,6 +533,13 @@
         <xs:element name="provenance" minOccurs="0">
           <xs:complexType>
             <xs:sequence>
+              <xs:element name="references" minOccurs="0">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="reference" type="ReferenceType" minOccurs="0" maxOccurs="unbounded"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
               <xs:element name="designDocs" type="DocumentRefType" minOccurs="0" maxOccurs="unbounded"/>
               <xs:element name="bom" type="DocumentRefType" minOccurs="0"/>
               <xs:element name="schematics" type="DocumentRefType" minOccurs="0" maxOccurs="unbounded"/>
@@ -540,7 +550,6 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-
       </xs:sequence>
 
       <xs:attribute name="schemaVersion" type="NonEmptyString" use="required"/>
