@@ -1,8 +1,8 @@
 # AIOSP
-Atomic Interferometry Open Standard Project
+Atomic Interferometry Open Standards Project
 
 ## Welcome!
-Welcome to the Atom Interferometer Open Standard Project! This is a community-driven initiative aimed at making atom interferometry more accessible, affordable, and standardized for researchers and communities around the world.
+Welcome to the Atom Interferometer Open Standards Project! This is a community-driven initiative aimed at making atom interferometry more accessible, affordable, and standardized for researchers and communities around the world.
 
 
 ## Why It Matters
