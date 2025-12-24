@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Interferometer xmlns="https://openinterferometry.org/schema/aios/1.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="https://openinterferometry.org/schema/aios/1.1 aios-interferometer-v1.1.xsd"
+  schemaVersion="1.1.0">
+
+  <identity>
+    <id>44444444-4444-4444-4444-444444444444</id>
+    <shortName>Williams-2024-CAL-ISS-AtomInterferometer</shortName>
+    <description>
+      Paper-based metadata example derived from Williams et al. (arXiv:2402.14685, 2024),
+      describing path-finding atom interferometry experiments on the ISS Cold Atom Lab (CAL).
+      Not stationary on Earth; included because it was in your candidate list.
+    </description>
+    <manufacturer>NASA/JPL Cold Atom Lab (CAL) science module</manufacturer>
+    <model>CAL Atom Interferometer (on-orbit upgrade)</model>
+    <buildDate>2024-02-22</buildDate>
+  </identity>
+
+  <apparatus>
+    <atomicSource>
+      <species>Rb87</species>
+      <isotopeDetail>Ultracold 87Rb atoms in CAL</isotopeDetail>
+      <sourceType>Cold Atom Lab (ISS) ultracold atom source</sourceType>
+      <notes>Paper notes influence of ISS vibrations on performance limits.</notes>
+    </atomicSource>
+
+    <pulseSequence>
+      <topology>MachZehnder_3Pulse</topology>
+      <beamType>Other</beamType>
+      <notes>Three-pulse Mach–Zehnder interferometer studied; paper also reports Ramsey shear-wave interferometry.</notes>
+    </pulseSequence>
+  </apparatus>
+
+  <performance>
+    <measurand>Inertial sensing / interferometric phase on ISS platform</measurand>
+    <notes>Paper reports observation of interference patterns for over 150 ms free-expansion time in Ramsey shear-wave mode.</notes>
+  </performance>
+
+  <provenance>
+    <references>
+      <reference>
+        <title>Interferometry of Atomic Matter Waves in the Cold Atom Lab on the International Space Station</title>
+        <authors>J. R. Williams et al.</authors>
+        <year>2024</year>
+        <arxiv>2402.14685</arxiv>
+        <uri>https://arxiv.org/abs/2402.14685</uri>
+      </reference>
+    </references>
+    <citation>Williams, J. R. et al. (2024). Interferometry of Atomic Matter Waves in the Cold Atom Lab on the International Space Station. arXiv:2402.14685.</citation>
+  </provenance>
+
+</Interferometer>
