@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Interferometer xmlns="https://openinterferometry.org/schema/aios/1.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="https://openinterferometry.org/schema/aios/1.1 aios-interferometer-v1.1.xsd"
+  schemaVersion="1.1.0">
+
+  <identity>
+    <id>33333333-3333-3333-3333-333333333333</id>
+    <shortName>Menoret-2018-Transportable-AQG</shortName>
+    <description>
+      Paper-based metadata example derived from Ménoret et al. (Scientific Reports, 2018).
+      The paper reports a transportable Absolute Quantum Gravimeter (AQG) using Rubidium atoms and
+      two-photon stimulated Raman transitions, designed for operation under real-world conditions.
+      This instance captures only values explicitly stated in the public article text.
+    </description>
+    <manufacturer>Research prototype / AQG (transportable)</manufacturer>
+    <model>Absolute Quantum Gravimeter (AQG-A01)</model>
+    <buildDate>2018-08-01</buildDate>
+  </identity>
+
+  <apparatus>
+    <atomicSource>
+      <species>Rb87</species>
+      <isotopeDetail>Rubidium atoms (matter-wave interferometry with two-photon stimulated Raman transitions)</isotopeDetail>
+      <sourceType>Transportable gravimeter sensor head</sourceType>
+      <notes>
+        The paper emphasizes operability by non-specialists, compactness/transportability, and continuous absolute g measurement.
+      </notes>
+    </atomicSource>
+
+    <pulseSequence>
+      <topology>MachZehnder_3Pulse</topology>
+      <beamType>Raman</beamType>
+      <notes>Measurement sequence based on matter-wave interferometry with Rubidium atoms using two-photon stimulated Raman transitions.</notes>
+    </pulseSequence>
+
+    <dimensions>
+      <mass>
+        <value>30</value>
+        <unit>kg</unit>
+        <note>Sensor head mass reported in the paper.</note>
+      </mass>
+      <height>
+        <value>0.55</value>
+        <unit>m</unit>
+        <note>Measurement height reported for the sensor head setup.</note>
+      </height>
+      <notes>Paper reports setup time &lt; 20 min and warm-up time ~ 1 h.</notes>
+    </dimensions>
+  </apparatus>
+
+  <performance>
+    <measurand>Absolute gravitational acceleration (g)</measurand>
+    <sensitivity>
+      <value>500</value>
+      <unit>nm/s^2/sqrt(Hz)</unit>
+      <note>Reported sensitivity at 2 Hz repetition rate.</note>
+    </sensitivity>
+    <bandwidth>
+      <value>2</value>
+      <unit>Hz</unit>
+      <note>Repetition rate reported; effective measurement cadence.</note>
+    </bandwidth>
+    <notes>
+      Paper reports long-term stability below 10 nm/s^2 (1 uGal) and continuous measurements during a month-long campaign.
+    </notes>
+  </performance>
+
+  <provenance>
+    <references>
+      <reference>
+        <title>Gravity measurements below 10−9 g with a transportable absolute quantum gravimeter</title>
+        <authors>V. Ménoret et al.</authors>
+        <year>2018</year>
+        <uri>https://www.nature.com/articles/s41598-018-30608-1</uri>
+      </reference>
+      <reference>
+        <title>arXiv preprint: Gravity measurements below 10−9 g with a transportable absolute quantum gravimeter</title>
+        <authors>V. Ménoret et al.</authors>
+        <year>2018</year>
+        <arxiv>1809.04908</arxiv>
+        <uri>https://arxiv.org/abs/1809.04908</uri>
+      </reference>
+    </references>
+    <citation>Ménoret, V. et al. (2018). Gravity measurements below 10−9 g with a transportable absolute quantum gravimeter. Scientific Reports 8, 12300.</citation>
+  </provenance>
+
+</Interferometer>

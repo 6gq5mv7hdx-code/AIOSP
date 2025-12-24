@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Interferometer xmlns="https://openinterferometry.org/schema/aios/1.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="https://openinterferometry.org/schema/aios/1.1 aios-interferometer-v1.1.xsd"
+  schemaVersion="1.1.0">
+
+  <identity>
+    <id>55555555-5555-5555-5555-555555555555</id>
+    <shortName>Werner-2025-Gravitational-Curvature-Scheme</shortName>
+    <description>
+      Paper-based metadata example derived from Werner et al. (Communications Physics, 2025; DOI:10.1038/s42005-025-02396-4).
+      This work proposes/analyses a local measurement scheme for gravitational curvature using atom interferometers.
+      The public record does not expose detailed hardware specifications, so this instance focuses on the declared measurand and intent.
+    </description>
+    <manufacturer>Research apparatus (scheme-level description)</manufacturer>
+    <model>Co-located dual-interferometer curvature scheme (paper)</model>
+    <buildDate>2025-11-01</buildDate>
+  </identity>
+
+  <apparatus>
+    <pulseSequence>
+      <topology>Other</topology>
+      <notes>
+        Differential signal of two co-located interferometers designed to isolate a phase shift proportional to gravitational curvature.
+      </notes>
+    </pulseSequence>
+  </apparatus>
+
+  <performance>
+    <measurand>Gravitational curvature (via differential phase of co-located interferometers)</measurand>
+  </performance>
+
+  <provenance>
+    <references>
+      <reference>
+        <title>Local measurement scheme of gravitational curvature using atom interferometers</title>
+        <authors>Michael Werner; Ali Lezeik; Dennis Schlippert; Ernst M. Rasel; Naceur Gaaloul; Klemens Hammerer</authors>
+        <year>2025</year>
+        <doi>10.1038/s42005-025-02396-4</doi>
+        <uri>https://doi.org/10.1038/s42005-025-02396-4</uri>
+      </reference>
+      <reference>
+        <title>arXiv preprint: Local Measurement Scheme of Gravitational Curvature using Atom Interferometers</title>
+        <authors>M. Werner et al.</authors>
+        <year>2024</year>
+        <arxiv>2409.03515</arxiv>
+        <uri>https://arxiv.org/abs/2409.03515</uri>
+      </reference>
+    </references>
+    <citation>Werner, M. et al. (2025). Local measurement scheme of gravitational curvature using atom interferometers. Communications Physics. https://doi.org/10.1038/s42005-025-02396-4</citation>
+  </provenance>
+
+</Interferometer>
