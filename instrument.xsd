@@ -1,0 +1,550 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="https://openinterferometry.org/schema/aios/1.0"
+  xmlns="https://openinterferometry.org/schema/aios/1.0"
+  elementFormDefault="qualified"
+  attributeFormDefault="unqualified">
+
+  <!-- =========================
+       Simple Types / Enums
+       ========================= -->
+
+  <xs:simpleType name="UUIDType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="URIType">
+    <xs:restriction base="xs:anyURI"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="NonEmptyString">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="UnitString">
+    <!-- Keep units as strings to avoid over-constraining; recommend UCUM in docs -->
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="AtomSpecies">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Rb87"/>
+      <xs:enumeration value="Rb85"/>
+      <xs:enumeration value="Cs133"/>
+      <xs:enumeration value="Sr87"/>
+      <xs:enumeration value="Yb171"/>
+      <xs:enumeration value="Na23"/>
+      <xs:enumeration value="K39"/>
+      <xs:enumeration value="K41"/>
+      <xs:enumeration value="Li7"/>
+      <xs:enumeration value="Other"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="InterferometerTopology">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="MachZehnder_3Pulse"/>
+      <xs:enumeration value="RamseyBorde"/>
+      <xs:enumeration value="Sagnac"/>
+      <xs:enumeration value="DoubleDiffraction"/>
+      <xs:enumeration value="LMT_MultiPulse"/>
+      <xs:enumeration value="Other"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="BeamType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Raman"/>
+      <xs:enumeration value="Bragg"/>
+      <xs:enumeration value="OpticalLattice"/>
+      <xs:enumeration value="Microwave"/>
+      <xs:enumeration value="Other"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="LaserRole">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Cooling"/>
+      <xs:enumeration value="Repump"/>
+      <xs:enumeration value="Raman"/>
+      <xs:enumeration value="Bragg"/>
+      <xs:enumeration value="Detection"/>
+      <xs:enumeration value="OpticalPumping"/>
+      <xs:enumeration value="Lattice"/>
+      <xs:enumeration value="Reference"/>
+      <xs:enumeration value="Other"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ClockStandardType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="GPSDO"/>
+      <xs:enumeration value="RbOscillator"/>
+      <xs:enumeration value="CsClock"/>
+      <xs:enumeration value="HydrogenMaser"/>
+      <xs:enumeration value="OpticalClock"/>
+      <xs:enumeration value="Other"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="CalibrationMethod">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="TiltSweep"/>
+      <xs:enumeration value="KnownAccelerationPlatform"/>
+      <xs:enumeration value="AbsoluteGravityReference"/>
+      <xs:enumeration value="CoLocatedClassicalGravimeter"/>
+      <xs:enumeration value="SelfCalibrationSequence"/>
+      <xs:enumeration value="Other"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="DataFormat">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="HDF5"/>
+      <xs:enumeration value="NetCDF"/>
+      <xs:enumeration value="Parquet"/>
+      <xs:enumeration value="CSV"/>
+      <xs:enumeration value="JSON"/>
+      <xs:enumeration value="Binary"/>
+      <xs:enumeration value="Other"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="CoordinateFrame">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="LocalENU"/>
+      <xs:enumeration value="LocalNED"/>
+      <xs:enumeration value="ECEF"/>
+      <xs:enumeration value="ECI"/>
+      <xs:enumeration value="Other"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- =========================
+       Reusable Complex Types
+       ========================= -->
+
+  <xs:complexType name="QuantityType">
+    <xs:sequence>
+      <xs:element name="value" type="xs:double"/>
+      <xs:element name="unit" type="UnitString"/>
+      <xs:element name="uncertainty" type="xs:double" minOccurs="0"/>
+      <xs:element name="uncertaintyUnit" type="UnitString" minOccurs="0"/>
+      <xs:element name="note" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="TimeIntervalType">
+    <xs:sequence>
+      <xs:element name="start" type="xs:dateTime"/>
+      <xs:element name="end" type="xs:dateTime"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="GeoLocationType">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" minOccurs="0"/>
+      <xs:element name="latitudeDeg" type="xs:double"/>
+      <xs:element name="longitudeDeg" type="xs:double"/>
+      <xs:element name="altitudeMeters" type="xs:double" minOccurs="0"/>
+      <xs:element name="coordinateFrame" type="CoordinateFrame" minOccurs="0"/>
+      <xs:element name="siteIdentifier" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="OrganizationType">
+    <xs:sequence>
+      <xs:element name="name" type="NonEmptyString"/>
+      <xs:element name="department" type="xs:string" minOccurs="0"/>
+      <xs:element name="url" type="URIType" minOccurs="0"/>
+      <xs:element name="contactEmail" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PersonType">
+    <xs:sequence>
+      <xs:element name="fullName" type="NonEmptyString"/>
+      <xs:element name="email" type="xs:string" minOccurs="0"/>
+      <xs:element name="orcid" type="xs:string" minOccurs="0"/>
+      <xs:element name="affiliation" type="OrganizationType" minOccurs="0"/>
+      <xs:element name="role" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="DocumentRefType">
+    <xs:sequence>
+      <xs:element name="title" type="NonEmptyString"/>
+      <xs:element name="uri" type="URIType" minOccurs="0"/>
+      <xs:element name="sha256" type="xs:string" minOccurs="0"/>
+      <xs:element name="version" type="xs:string" minOccurs="0"/>
+      <xs:element name="note" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="VacuumSystemType">
+    <xs:sequence>
+      <xs:element name="chamberType" type="xs:string" minOccurs="0"/>
+      <xs:element name="chamberVolume" type="QuantityType" minOccurs="0"/>
+      <xs:element name="basePressure" type="QuantityType" minOccurs="0"/>
+      <xs:element name="operatingPressure" type="QuantityType" minOccurs="0"/>
+      <xs:element name="pump" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="type" type="xs:string"/>
+            <xs:element name="manufacturer" type="xs:string" minOccurs="0"/>
+            <xs:element name="model" type="xs:string" minOccurs="0"/>
+            <xs:element name="pumpingSpeed" type="QuantityType" minOccurs="0"/>
+            <xs:element name="note" type="xs:string" minOccurs="0"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="getters" type="xs:string" minOccurs="0"/>
+      <xs:element name="pressureGauge" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="type" type="xs:string"/>
+            <xs:element name="range" type="xs:string" minOccurs="0"/>
+            <xs:element name="accuracy" type="QuantityType" minOccurs="0"/>
+            <xs:element name="note" type="xs:string" minOccurs="0"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="LaserType">
+    <xs:sequence>
+      <xs:element name="id" type="NonEmptyString"/>
+      <xs:element name="role" type="LaserRole"/>
+      <xs:element name="wavelength" type="QuantityType" minOccurs="0"/>
+      <xs:element name="linewidth" type="QuantityType" minOccurs="0"/>
+      <xs:element name="outputPower" type="QuantityType" minOccurs="0"/>
+      <xs:element name="frequencyReference" type="xs:string" minOccurs="0"/>
+      <xs:element name="stability" type="QuantityType" minOccurs="0"/>
+      <xs:element name="manufacturer" type="xs:string" minOccurs="0"/>
+      <xs:element name="model" type="xs:string" minOccurs="0"/>
+      <xs:element name="notes" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="MagneticSystemType">
+    <xs:sequence>
+      <xs:element name="shielding" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="layers" type="xs:integer" minOccurs="0"/>
+            <xs:element name="attenuation" type="QuantityType" minOccurs="0"/>
+            <xs:element name="notes" type="xs:string" minOccurs="0"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="coil" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="purpose" type="xs:string" minOccurs="0"/>
+            <xs:element name="geometry" type="xs:string" minOccurs="0"/>
+            <xs:element name="maxField" type="QuantityType" minOccurs="0"/>
+            <xs:element name="stability" type="QuantityType" minOccurs="0"/>
+            <xs:element name="driver" type="xs:string" minOccurs="0"/>
+            <xs:element name="notes" type="xs:string" minOccurs="0"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="VibrationIsolationType">
+    <xs:sequence>
+      <xs:element name="type" type="xs:string"/>
+      <xs:element name="cornerFrequency" type="QuantityType" minOccurs="0"/>
+      <xs:element name="attenuation" type="QuantityType" minOccurs="0"/>
+      <xs:element name="referenceSeismometer" type="xs:string" minOccurs="0"/>
+      <xs:element name="notes" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="AtomicSourceType">
+    <xs:sequence>
+      <xs:element name="species" type="AtomSpecies"/>
+      <xs:element name="isotopeDetail" type="xs:string" minOccurs="0"/>
+      <xs:element name="sourceType" type="xs:string" minOccurs="0"/>
+      <xs:element name="atomNumber" type="QuantityType" minOccurs="0"/>
+      <xs:element name="temperature" type="QuantityType" minOccurs="0"/>
+      <xs:element name="cycleTime" type="QuantityType" minOccurs="0"/>
+      <xs:element name="launchOrDropHeight" type="QuantityType" minOccurs="0"/>
+      <xs:element name="statePreparation" type="xs:string" minOccurs="0"/>
+      <xs:element name="notes" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PulseSequenceType">
+    <xs:sequence>
+      <xs:element name="topology" type="InterferometerTopology"/>
+      <xs:element name="beamType" type="BeamType" minOccurs="0"/>
+      <xs:element name="pulseCount" type="xs:integer" minOccurs="0"/>
+      <xs:element name="T" type="QuantityType" minOccurs="0"/>
+      <xs:element name="effectiveWavevector" type="QuantityType" minOccurs="0"/>
+      <xs:element name="contrast" type="QuantityType" minOccurs="0"/>
+      <xs:element name="phaseNoise" type="QuantityType" minOccurs="0"/>
+      <xs:element name="sequenceDefinition" type="DocumentRefType" minOccurs="0"/>
+      <xs:element name="notes" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ReadoutType">
+    <xs:sequence>
+      <xs:element name="method" type="xs:string"/>
+      <xs:element name="detector" type="xs:string" minOccurs="0"/>
+      <xs:element name="quantumEfficiency" type="QuantityType" minOccurs="0"/>
+      <xs:element name="bandwidth" type="QuantityType" minOccurs="0"/>
+      <xs:element name="notes" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="TimingReferenceType">
+    <xs:sequence>
+      <xs:element name="standard" type="ClockStandardType"/>
+      <xs:element name="model" type="xs:string" minOccurs="0"/>
+      <xs:element name="allanDeviation" type="QuantityType" minOccurs="0"/>
+      <xs:element name="distribution" type="xs:string" minOccurs="0"/>
+      <xs:element name="notes" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ControlSystemType">
+    <xs:sequence>
+      <xs:element name="controlSoftware" type="xs:string" minOccurs="0"/>
+      <xs:element name="controlSoftwareVersion" type="xs:string" minOccurs="0"/>
+      <xs:element name="reproducibleBuild" type="xs:boolean" minOccurs="0"/>
+      <xs:element name="firmware" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="component" type="NonEmptyString"/>
+            <xs:element name="version" type="xs:string" minOccurs="0"/>
+            <xs:element name="sourceUri" type="URIType" minOccurs="0"/>
+            <xs:element name="sha256" type="xs:string" minOccurs="0"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="timingReference" type="TimingReferenceType" minOccurs="0"/>
+      <xs:element name="syncInterfaces" type="xs:string" minOccurs="0"/>
+      <xs:element name="notes" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="EnvironmentType">
+    <xs:sequence>
+      <xs:element name="temperature" type="QuantityType" minOccurs="0"/>
+      <xs:element name="pressure" type="QuantityType" minOccurs="0"/>
+      <xs:element name="humidity" type="QuantityType" minOccurs="0"/>
+      <xs:element name="acousticNoise" type="QuantityType" minOccurs="0"/>
+      <xs:element name="magneticFieldAmbient" type="QuantityType" minOccurs="0"/>
+      <xs:element name="vibrationLevel" type="QuantityType" minOccurs="0"/>
+      <xs:element name="monitoringSensors" type="xs:string" minOccurs="0"/>
+      <xs:element name="notes" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CalibrationType">
+    <xs:sequence>
+      <xs:element name="method" type="CalibrationMethod"/>
+      <xs:element name="date" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="performedBy" type="PersonType" minOccurs="0"/>
+      <xs:element name="referenceInstrument" type="xs:string" minOccurs="0"/>
+      <xs:element name="results" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="scaleFactor" type="QuantityType" minOccurs="0"/>
+            <xs:element name="bias" type="QuantityType" minOccurs="0"/>
+            <xs:element name="noiseFloor" type="QuantityType" minOccurs="0"/>
+            <xs:element name="bandwidth" type="QuantityType" minOccurs="0"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="report" type="DocumentRefType" minOccurs="0"/>
+      <xs:element name="notes" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="DataProductType">
+    <xs:sequence>
+      <xs:element name="id" type="NonEmptyString"/>
+      <xs:element name="format" type="DataFormat"/>
+      <xs:element name="uri" type="URIType" minOccurs="0"/>
+      <xs:element name="sha256" type="xs:string" minOccurs="0"/>
+      <xs:element name="timeSpan" type="TimeIntervalType" minOccurs="0"/>
+      <xs:element name="sampleRate" type="QuantityType" minOccurs="0"/>
+      <xs:element name="channels" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="channel" minOccurs="0" maxOccurs="unbounded">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="name" type="NonEmptyString"/>
+                  <xs:element name="quantity" type="xs:string" minOccurs="0"/>
+                  <xs:element name="unit" type="UnitString" minOccurs="0"/>
+                  <xs:element name="description" type="xs:string" minOccurs="0"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="processing" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="pipelineName" type="xs:string" minOccurs="0"/>
+            <xs:element name="pipelineVersion" type="xs:string" minOccurs="0"/>
+            <xs:element name="sourceUri" type="URIType" minOccurs="0"/>
+            <xs:element name="parameters" type="xs:string" minOccurs="0"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="notes" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="InteroperabilityType">
+    <xs:sequence>
+      <xs:element name="schemaVersion" type="NonEmptyString"/>
+      <xs:element name="supportedProtocols" type="xs:string" minOccurs="0"/>
+      <xs:element name="timeSync" type="xs:string" minOccurs="0"/>
+      <xs:element name="metadataExport" type="xs:string" minOccurs="0"/>
+      <xs:element name="dataAccess" type="xs:string" minOccurs="0"/>
+      <xs:element name="notes" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- =========================
+       Root: Interferometer
+       ========================= -->
+
+  <xs:element name="Interferometer">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="identity">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="id" type="UUIDType"/>
+              <xs:element name="shortName" type="NonEmptyString"/>
+              <xs:element name="description" type="xs:string" minOccurs="0"/>
+              <xs:element name="manufacturer" type="xs:string" minOccurs="0"/>
+              <xs:element name="model" type="xs:string" minOccurs="0"/>
+              <xs:element name="serialNumber" type="xs:string" minOccurs="0"/>
+              <xs:element name="buildDate" type="xs:date" minOccurs="0"/>
+              <xs:element name="owner" type="OrganizationType" minOccurs="0"/>
+              <xs:element name="maintainers" minOccurs="0">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="person" type="PersonType" minOccurs="0" maxOccurs="unbounded"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="site" type="GeoLocationType" minOccurs="0"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="apparatus">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="vacuumSystem" type="VacuumSystemType" minOccurs="0"/>
+              <xs:element name="atomicSource" type="AtomicSourceType" minOccurs="0"/>
+              <xs:element name="lasers" minOccurs="0">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="laser" type="LaserType" minOccurs="0" maxOccurs="unbounded"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="magneticSystem" type="MagneticSystemType" minOccurs="0"/>
+              <xs:element name="vibrationIsolation" type="VibrationIsolationType" minOccurs="0"/>
+              <xs:element name="pulseSequence" type="PulseSequenceType" minOccurs="0"/>
+              <xs:element name="readout" type="ReadoutType" minOccurs="0"/>
+              <xs:element name="controlSystem" type="ControlSystemType" minOccurs="0"/>
+              <xs:element name="dimensions" minOccurs="0">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="footprint" type="QuantityType" minOccurs="0"/>
+                    <xs:element name="height" type="QuantityType" minOccurs="0"/>
+                    <xs:element name="mass" type="QuantityType" minOccurs="0"/>
+                    <xs:element name="notes" type="xs:string" minOccurs="0"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="safety" minOccurs="0">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="laserClass" type="xs:string" minOccurs="0"/>
+                    <xs:element name="hazards" type="xs:string" minOccurs="0"/>
+                    <xs:element name="mitigations" type="xs:string" minOccurs="0"/>
+                    <xs:element name="documents" type="DocumentRefType" minOccurs="0" maxOccurs="unbounded"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="environment" type="EnvironmentType" minOccurs="0"/>
+
+        <xs:element name="performance" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="measurand" type="xs:string" minOccurs="0"/>
+              <xs:element name="sensitivity" type="QuantityType" minOccurs="0"/>
+              <xs:element name="accuracy" type="QuantityType" minOccurs="0"/>
+              <xs:element name="dynamicRange" type="QuantityType" minOccurs="0"/>
+              <xs:element name="bandwidth" type="QuantityType" minOccurs="0"/>
+              <xs:element name="uptime" type="QuantityType" minOccurs="0"/>
+              <xs:element name="notes" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="calibrations" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="calibration" type="CalibrationType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="dataProducts" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="dataProduct" type="DataProductType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="interoperability" type="InteroperabilityType" minOccurs="0"/>
+
+        <xs:element name="provenance" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="designDocs" type="DocumentRefType" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="bom" type="DocumentRefType" minOccurs="0"/>
+              <xs:element name="schematics" type="DocumentRefType" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="firmwareAndSoftwareRepo" type="URIType" minOccurs="0"/>
+              <xs:element name="license" type="xs:string" minOccurs="0"/>
+              <xs:element name="citation" type="xs:string" minOccurs="0"/>
+              <xs:element name="notes" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+      </xs:sequence>
+
+      <xs:attribute name="schemaVersion" type="NonEmptyString" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>
